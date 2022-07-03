@@ -1,8 +1,12 @@
 <template>
 	<div id="app">
 		<h2>push</h2>
+		<button @click="init">초기화셋팅</button>
+		<br />
+		<div></div>
 		<button @click="push">눌러봥</button>
-		<div class="dump" v-if="cordova">
+		<div>cordova.deviceready : {{ cordova.deviceready }}</div>
+		<div v-if="cordova" class="dump">
 			{{ cordova }}
 			<!-- <div>cordova.deviceready : {{ cordova.deviceready }}</div>
 			<div>cordova.camera : {{ cordova.contacts }}</div> -->
@@ -14,19 +18,21 @@
 	import Vue from 'vue';
 
 	export default {
-		methods: {
-			pluginEnabled() {
-				console.log(this.cordova.plugins);
-			},
-			push() {
-				console.log('hi');
-			},
-		},
-
 		data() {
 			return {
 				cordova: Vue.cordova,
 			};
+		},
+		methods: {
+			pluginEnabled() {
+				console.log(this.cordova.plugins);
+			},
+			init() {
+				this.$CORDOVA_API.push.OneSignalInit();
+			},
+			push() {
+				console.log('z');
+			},
 		},
 	};
 </script>
