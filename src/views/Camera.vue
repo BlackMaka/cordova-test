@@ -3,11 +3,14 @@
 		<button @click="takePicture">사진찍기</button>
 		<br />
 		<button @click="getPicture">갤러리</button>
-		<br />
+
 		<img :src="imageURI" alt="dd" width="100" height="100" />
 		{{ imageURI }}
+		<br />
+		<br>
+		<Vue />
 
-		<div class="dump" v-if="cordova">
+		<div v-if="cordova" class="dump">
 			<div>cordova.deviceready : {{ cordova.deviceready }}</div>
 			<div>cordova.camera : {{ cordova.camera }}</div>
 		</div>
@@ -16,64 +19,25 @@
 
 <script>
 	import Vue from 'vue';
-
 	export default {
-		methods: {
-			pluginEnabled() {
-				console.log(this.cordova.plugins);
-			},
-			takePicture() {
-				if (!Vue.cordova.camera) {
-					window.alert('Vue.cordova.camera not found !');
-					return;
-				}
-
-				Vue.cordova.camera.getPicture(
-					imageURI => {
-						window.alert('Photo URI : ' + imageURI);
-						this.imageURI = 'data:image/jpeg;base64,' + imageURI;
-					},
-					message => {
-						//window.alert('FAILED : ' + message);
-						console.log('FAILED : ' + message); // 사진선택 취소시에도 동작
-					},
-					{
-						saveToPhotoAlbum: true, // 이미지 앨범에 저장
-					},
-				);
-			},
-			getPicture() {
-				if (!Vue.cordova.camera) {
-					window.alert('Vue.cordova.camera not found !');
-					return;
-				}
-				//PictureSourceType.CAMERA //카메라
-				//PictureSourceType.PHOTOLIBRARY // 갤러리
-				//PictureSourceType.SAVEDPHOTOALBUM // 찍은사진만
-
-				Vue.cordova.camera.getPicture(
-					imageURI => {
-						window.alert('Photo URI : ' + imageURI);
-						this.imageURI = 'data:image/jpeg;base64,' + imageURI;
-					},
-					message => {
-						//window.alert('FAILED : ' + message);
-						console.log('FAILED : ' + message); // 사진선택 취소시에도 동작
-					},
-					{
-						destinationType: Vue.cordova.camera.DestinationType.DATA_URL,
-						sourceType: Vue.cordova.camera.PictureSourceType.PHOTOLIBRARY,
-					},
-				);
-			},
-		},
-
 		data() {
 			return {
 				cordova: Vue.cordova,
 				contacts: '',
 				imageURI: '',
 			};
+		},
+		methods: {
+			pluginEnabled() {
+				console.log(this.cordova.plugins);
+			},
+			async takePicture() {
+				this.imageURI = await this.$CORDOVA_API.camera.takePicture();
+			},
+			async getPicture() {
+				//this.imageURI = await this.getPicture();
+				this.imageURI = await this.$CORDOVA_API.camera.getPicture();
+			},
 		},
 	};
 </script>
