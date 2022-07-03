@@ -2,9 +2,9 @@
 	<div id="app">
 		<h2>contacts</h2>
 		<v-btn @click="device">버튼 ㅋ</v-btn>
-		<div class="dump" v-if="cordova">
+		<div v-if="cordova" class="dump">
 			<div>cordova.deviceready : {{ cordova.deviceready }}</div>
-			<div>cordova.camera : {{ cordova.contacts }}</div>
+			<div>cordova.device : {{ cordova.device }}</div>
 		</div>
 	</div>
 </template>
@@ -13,30 +13,18 @@
 	import Vue from 'vue';
 
 	export default {
+		data() {
+			return {
+				cordova: Vue.cordova,
+			};
+		},
 		methods: {
 			pluginEnabled() {
 				console.log(this.cordova.plugins);
 			},
 			device() {
-				if (!Vue.cordova.device) {
-					window.alert('FAILED : device information not found');
-				} else {
-					window.alert(
-						'Device : ' +
-							Vue.cordova.device.manufacturer +
-							' ' +
-							Vue.cordova.device.platform +
-							' ' +
-							Vue.cordova.device.version,
-					);
-				}
+				this.$CORDOVA_API.device.getDeviceInfo();
 			},
-		},
-
-		data() {
-			return {
-				cordova: Vue.cordova,
-			};
 		},
 	};
 </script>
