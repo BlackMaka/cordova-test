@@ -6,9 +6,9 @@
 
 		<button @click="getPhoneNumber">전화번호 가져오기</button>
 
-		<div class="dump" v-if="cordova">
+		<div v-if="cordova" class="dump">
 			<div>cordova.deviceready : {{ cordova.deviceready }}</div>
-			<div>cordova.camera : {{ cordova.contacts }}</div>
+			<div>cordova.contacts : {{ cordova.contacts }}</div>
 		</div>
 		{{ contacts }}
 	</div>
@@ -18,47 +18,23 @@
 	import Vue from 'vue';
 
 	export default {
-		methods: {
-			pluginEnabled() {
-				console.log(this.cordova.plugins);
-			},
-
-			getPhoneNumber() {
-				if (!Vue.cordova.contacts) {
-					window.alert('Vue.cordova.contacts not found !');
-					return;
-				}
-				//const ContactFindOptions = ContactFindOptions || function () {};
-				//var options = new ContactFindOptions();
-				//options.filter = 'Bob';
-
-				var options = {};
-
-				options.filter = this.name;
-				Vue.cordova.contacts.find(
-					//['displayName'],
-					[
-						Vue.cordova.contacts.fieldType.displayName,
-						Vue.cordova.contacts.fieldType.phoneNumbers,
-					],
-					contacts => {
-						window.alert('Contacts found : ' + contacts.length);
-						this.contacts = contacts;
-					},
-					error => {
-						window.alert('FAILED : ' + error.code);
-					},
-					options,
-				);
-			},
-		},
-
 		data() {
 			return {
 				cordova: Vue.cordova,
 				contacts: '',
 				name: '',
 			};
+		},
+		methods: {
+			pluginEnabled() {
+				console.log(this.cordova.plugins);
+			},
+
+			async getPhoneNumber() {
+				this.contacts = await this.$CORDOVA_API.contacts.getContacts({
+					filter: this.name,
+				});
+			},
 		},
 	};
 </script>
